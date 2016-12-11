@@ -6,40 +6,60 @@ const express = require("express");
 const router = express.Router();
 const data = require("../data");
 const siteData = data.site;
+const imageData = data.image;
+const userData = data.user;
+const commentData =  data.comment;
+const cityData = data.city;
+
+const path = require("path");
+let notFound = path.resolve("./static/404.html");
 
 router.get("/", (req, res) => {
     siteData.getAllSites().then((siteList) => {
+        res.json(siteList);
+    }).catch((e) => {
+        res.sendFile(notFound);
+    });
+});
+
+router.get("/siteId/:id", (req, res) => {
+    siteData.getSiteById(req.params.id).then((site) => {
+        imageData.getImageById(site.mainImage).then((siteMainImage) => {
+            commentData.getCommentByBelongToId(req.params.id).then((commentList) => {
+                cityData.getCityById(site.cityId).then((city) => {
+                    let promises = [];
+                    for (let i = 0, len = commentList.length; i < len; i++) {
+                        promises.push(userData.getUserById(commentList[i].userId).then((user) => {
+                           commentList[i].userId = user.username;
+                        }));
+                    }
+                    Promise.all(promises).then(() => {
+                        res.render("site/singleSite", {site: site, siteMainImage: siteMainImage, siteComments: commentList, city: city});
+                    });
+                });
+            });
+        });
+    }).catch(() => {
+        res.sendFile(notFound);
+    });
+});
+
+router.get("/cityId/:id", (req, res) => {
+    siteData.getSitesByCityId(req.params.id).then((siteList) => {
         res.json(siteList);
     }).catch((e) => {
         res.status(500).json({error: e});
     });
 });
 
-router.get("/siteId/:id", (req, res) => {
-    siteData.getSiteById(req.params.id).then((site) => {
-        res.json(site);
-    }).catch(() => {
-        res.status(404).json({error: "Site not found!"});
-    });
-});
-
-router.get("/siteName/:name", (req, res) => {
-    siteData.getSiteByName(req.params.name).then((site) => {
-        res.json(site);
-    }).catch(() => {
-        res.status(404).json({error: "Site not found!"});
-    });
-});
-
-router.post("/", (req, res) => {
-    let sitePostData = req.body;
-    siteData.addSite(sitePostData.name, sitePostData.location, sitePostData.address, sitePostData.commute, sitePostData.price, sitePostData.closingTime, sitePostData.phone, sitePostData.website, sitePostData.description, sitePostData.mainImage, sitePostData.type, sitePostData.tips, sitePostData.tag, sitePostData.cityId).then((newSite) => {
-        res.json(newSite);
+router.get("/photo/:siteId", (req, res) => {
+    imageData.getImageBySiteId(req.params.siteId).then((imageList) => {
+        res.render('image/imageList', { imageList: imageList });
     }).catch((e) => {
         res.status(500).json({error: e});
     });
 });
-
+/*
 router.put("/:id", (req, res) => {
     let updatedData = req.body;
     let getSite = siteData.getSiteById(req.params.id);
@@ -67,6 +87,6 @@ router.delete("/:id", (req, res) => {
     }).catch(() => {
         res.status(404).json({error: "Site not found!"});
     });
-});
+});*/
 
 module.exports = router;

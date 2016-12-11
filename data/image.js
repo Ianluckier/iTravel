@@ -21,20 +21,22 @@ const uuid = require('node-uuid');
     "userId": "",
     "blogId": "",
     "siteId": "",
-    "cityId": ""
+    "cityId": "",
+    "foodId": ""
   }
  */
 
 let exportedMethods = {
+// getAllImages    
     getAllImages() {
         return image().then((imageCollection) => {
             return imageCollection.find({}).toArray();
         });
     },
-
+    
+// getImageById
     getImageById(id) {
         if (!id) return Promise.reject ("You must provide an id.");
-        console.log(id);
         return image().then((imageCollection) => {
             return imageCollection.findOne({ _id: id }).then((image) => {
 
@@ -44,6 +46,7 @@ let exportedMethods = {
         });
     },    
     
+// getImageByUserId
     getImageByName(name) {
         if (!name) return Promise.reject ("You must provide a image name.");
 
@@ -54,55 +57,120 @@ let exportedMethods = {
             });
         });
     },
-
+// getImageByUserId
     getImageByUserId(userId) {
         if (!userId) return Promise.reject ("You must provide a userId.");
 
         return image().then((imageCollection) => {
-            return imageCollection.find({ "userId": userId }).toArray().then((imageList) => {
+            return imageCollection.find({ userId: userId }).toArray().then((imageList) => {
                 if (!imageList) return Promise.reject (`image with userId of ${userId} is not found.`);
                 return imageList;
             });
         }); 
     },
-
+    
+// getImageByBlogId
     getImageByBlogId(blogId) {
         if (!blogId) return Promise.reject ("You must provide a blogId.");
 
         return image().then((imageCollection) => {
-            return imageCollection.find({ "blogId": blogId }).toArray().then((imageList) => {
+            return imageCollection.find({ blogId: blogId }).toArray().then((imageList) => {
                 if (!imageList) return Promise.reject (`image with blogId of ${blogId} is not found.`);
                 return imageList;
             });
         }); 
-    },    
-    
+    },
 
-    addImage(name, address, createTime, type, userId, blogId, siteId, cityId) {
-        // check name
-        if (!name) return Promise.reject ("You must provide a name of the image.");
-        if (!content) return Promise.reject("You must provide content of the image.")
-        return image().then((blogCollection) => {
-            let newImage = {
-                _id: uuid.v4(),
-                name: name,
-                address: address,
-                createTime: createTime,
-                type: type,
-                userId: userId,
-                blogId: blogId,
-                siteId: siteId,
-                cityId: cityId
-            };
-
-            return imageCollection.insertOne(newImage).then((newInsertInformation) => {
-                return newInsertInformation.insertedId;
-            }).then((newId) => {
-                return this.getImageById(newId);
+// getImageBySiteId    
+    getImageBySiteId(siteId) {
+        console.log(siteId);
+        if (!siteId) return Promise.reject ("You must provide a siteId.");
+        //console.log("1111111111111111");
+        return image().then((imageCollection) => {
+            return imageCollection.find({ siteId: siteId }).toArray().then((imageList) => {
+               //console.log(imageList);
+                if (!imageList) return Promise.reject (`image with siteId of ${siteId} is not found.`);
+                return imageList;
             });
         });
     },
 
+    getImageByCityId(cityId) {
+        if (!cityId) return Promise.reject ("You must provide a cityId.");
+        
+        return image().then((imageCollection) => {
+            return imageCollection.find({ cityId: cityId }).toArray().then((imageList) => {
+                if (!imageList) return Promise.reject (`image with cityId of ${cityId} is not found.`);
+                return imageList;
+            });
+        });
+    },
+    
+// getImageByFoodId
+    getImageByFoodId(foodId) {
+        if (!foodId) return Promise.reject ("You must provide a foodId.");
+    //console.log("1111111111")
+        return image().then((imageCollection) => {
+            return imageCollection.find({ foodId: foodId }).toArray().then((imageList) => {
+                if (!imageList) return Promise.reject (`image with foodId of ${foodId} is not found.`);
+                // console.log(imageList)
+                let blogImages = [];
+                if(imageList.length >= 3){
+                    blogImages.push(imageList[0]);
+                    blogImages.push(imageList[1]);
+                    blogImages.push(imageList[2]);
+                    console.log(blogImages);
+                    return blogImages;
+                }else{
+                    return imageList;
+                }
+            });
+        });
+    },
+
+
+    addImage(imageInfo) {
+        // check name
+        if (!imageInfo.name) return Promise.reject ("You must provide a name of the image.");
+        if (!imageInfo.path) return Promise.reject("You must provide a path of the image.")
+        if (!imageInfo.address)  imageInfo.mainImage =null;
+        if (!imageInfo.createTime)  imageInfo.createTime =new Date("<YYYY-mm-dd>");
+        if (!imageInfo.type)  imageInfo.type =null;
+        if (!imageInfo.userId)  imageInfo.userId =null;
+        if (!imageInfo.blogId)  imageInfo.blogId =null;
+        if (!imageInfo.siteId)  imageInfo.siteId =null;
+        if (!imageInfo.cityId)  imageInfo.cityId =null;
+        if (!imageInfo.foodId)  imageInfo.foodId =null;
+
+        return image().then((imageCollection) => {
+            let newImage = {
+                _id: uuid.v4(),
+                name: imageInfo.name,
+                path: imageInfo.path,
+                address: imageInfo.address,
+                createTime: imageInfo.createTime,
+                type: imageInfo.type,
+                userId: imageInfo.userId,
+                blogId: imageInfo.blogId,
+                siteId: imageInfo.siteId,
+                cityId: imageInfo.cityId,
+                foodId: imageInfo.foodId
+            };   
+            return imageCollection.insertOne(newImage).then((newInsertInformation) => {
+                return newInsertInformation.insertedId;
+            });
+        })
+        .then((newId) => {
+                console.log("add new image with new id: ", newId)
+                return this.getImageById(newId);
+        })
+        .catch(e=>{
+            console.log(e);
+            Promise.reject(e);
+        })
+    },
+    
+//remove Image
     removeImage(id) {
         if (!id) return Promise.reject ("You must provide an image id.");
 
@@ -117,6 +185,7 @@ let exportedMethods = {
         });
     },
 
+// updateImage    
     updateImage(id, updatedImage) {
         if (!id) return Promise.reject ("You must provide an id.");
 

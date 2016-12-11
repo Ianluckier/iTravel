@@ -7,24 +7,27 @@ const express = require('express');
 const router = express.Router();
 const data = require("../data");
 const imageData = data.image;
+const path = require("path");
+let notFound = path.resolve("./static/404.html");
 
 // get-1: Return all the images
 router.get("/", (req, res) => {
     imageData.getAllImages().then((imageList) => {
-         res.json(imageList);
-    }, () => {
-        res.sendStatus(500);
+         //res.render("",imageList);
+         res.render('image/imageList', { imageList: imageList });
+    }).catch((e) => {
+        res.sendFile(notFound);
     });
 });
 
 // get-2: Return the image information of the given image name.
 router.get("/:name", (req, res) => {
     imageData.getImageByName(req.params.name).then((image) => {
-        //res.render('image/imageList', { list: imageList });
-         res.json(image);
+        res.render('image/imageList', { list: imageList });
+         //res.json(image);
     }).catch((err) => {
         console.log(err);
-        res.status(404).json({ error: "image not found." });
+        res.sendFile(notFound);
     });
 });
 
@@ -32,32 +35,62 @@ router.get("/:name", (req, res) => {
 router.get("/id/:id", (req, res) => {
     console.log("id");
     imageData.getImageById(req.params.id).then((image) => {
-        console.log("1111111111111111111111")
+        //console.log("1111111111111111111111")
+        res.render('image/imageList', { list: imageList });
          res.json(image);
-    }).catch(() => {
+    }).catch((err) => {
         console.log(err);
-        res.status(404).json({ error: "image not found." });
+        res.sendFile(notFound);
     });
 });
 
 // get-4: Return all the image information of the given user id
 router.get("/userId/:userId", (req, res) => {
     imageData.getImageByUserId(req.params.userId).then((imageList) => {
-        console.log("1111111111111")
-        //res.render('image/imageList', { list: imageList });
-        res.json(imageList);
+        res.render('image/imageList', { list: imageList });
+       //res.json(imageList);
     }, (error) => {
-        res.sendStatus(404);
+        res.sendFile(notFound);
     });
 });
 
 // get-5: Return all the image information of the given blog id
 router.get("/blogId/:blogId", (req, res) => {
     imageData.getImageByBlogId(req.params.blogId).then((imageList) => {
-        //res.render('image/imageList', { list: imageList });
-         res.json(imageList);
+        res.render('image/imageList', { list: imageList });
+        //res.json(imageList);
     }).catch(() => {
-        res.status(404).json({ error: "image not found." });
+        res.sendFile(notFound);
+    });
+});
+
+// get-6: Return all the image information of the given site id
+router.get("/siteId/:siteId", (req, res) => {
+    imageData.getImageBySiteId(req.params.siteId).then((imageList) => {
+        res.render('image/imageList', { imageList: imageList });
+        //res.json(imageList);
+    }).catch(() => {
+        res.sendFile(notFound);
+    });
+});
+
+// get-7: Return all the image information of the given city id
+router.get("/cityId/:cityId", (req, res) => {
+    imageData.getImageByCityId(req.params.cityId).then((imageList) => {
+        res.render('image/imageList', { list: imageList });
+        //res.json(imageList);
+    }).catch(() => {
+        res.sendFile(notFound);
+    });
+});
+
+// get-8: Return all the image information of the given food id
+router.get("/foodId/:foodId", (req, res) => {
+    imageData.getImageByFoodId(req.params.foodId).then((imageList) => {
+        //res.render('image/imageList', { list: imageList });
+        res.json(imageList);
+    }).catch(() => {
+        res.sendFile(notFound);
     });
 });
 
@@ -81,6 +114,7 @@ router.post("/", (req, res) => {
         });
 });
 
+/*
 // put-1: Update image with the given image id.
 router.put("/:id", (req, res) => {
     let imageInfo = req.body;
@@ -116,6 +150,7 @@ router.delete("/:id", (req, res) => {
         res.status(404).json({ error: "image not found." });
     });
 });
+*/
 
 
 

@@ -11,36 +11,38 @@ const UserData = require('../data/users');
 const bcrypt = require("bcrypt-nodejs");
 
 module.exports = function (passport) {
+    // signup Strategy logic
     passport.use('local-register', new LocalStrategy({
             usernameField: 'username',
             passwordField: 'password',
             passReqToCallback: true // allows us to pass back the entire request to the callback
         },
         function (req, username, password, done) {
-            console.log("username = " + username);
-            console.log("password = " + password);
+            if(username.length<8||username.length>20){
+                return done(null, false, req.flash('error', 'The username length is too long or short.'));
+            }
+            if(password.length<8||password.length>20){
+                return done(null, false, req.flash('error', 'The password length is too long or short.'));
+            }
             UserData.getUserByName(username).then((user) => {
                 if (user != null) {
                     return done(null, false, req.flash('error', 'That username is already taken.'));
                 } else {
                     let newUser = UserData.register(username, password);
                     return newUser.then((newUser) => {
-                        console.log(123);
                         return done(null, newUser);
                     });
                 }
             });
         }));
-
+    // local Strategy logic
     passport.use('local-login', new LocalStrategy({
             usernameField: 'username',
             passwordField: 'password',
             passReqToCallback: true // allows us to pass back the entire request to the callback
         },
         function (req, username, password, done) {
-            console.log("loginBegin" + username + " pwd = " + password);
             UserData.getUserByName(username).then((user) => {
-                console.log(user);
                 if (!user) {
                     return done(null, false, {message: 'Incorrect username and password.'});
                 }
@@ -48,16 +50,10 @@ module.exports = function (passport) {
                     if (res === true) {
                         return done(null, user);
                     } else {
-                        console.log("not maches the hash");
                         return done(null, false, {message: 'Incorrect password.'});
                     }
                 });
-
-
             });
-
         })
     );
-
-
 };

@@ -1,0 +1,46 @@
+<!-- login -->
+<div class="login">
+    <div class="container">
+        <div class="login-body">
+            <div class="login-heading">
+                <h1>Login</h1>
+            </div>
+            <div class="login-info">
+                <form name="loginForm" id="loginForm" method="post" action="/user/login">
+                    <input type="text" class="user" name="username" id="username" placeholder="username" >
+                    <input type="password" name="password" class="lock" id="password" placeholder="Password" required>
+                    <div class="forgot-top-grids">
+                        <div class="forgot-grid">
+                            {{#if message }}
+                                <div class="alert alert-danger" role="alert">
+                                    <strong>Oh snap!</strong> {{message }}
+                                </div>
+                            {{/if}}
+                            <div class="alert alert-danger hidden" role="alert" id="form-alert">
+                                123
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+                    <input type="submit" name="Sign In" value="Login" id="submitBtn">
+                    <div class="signup-text">
+                        <a href="/user/signup">Don't have an account? Create one now</a>
+                    </div>
+                    <hr>
+                    <h2>or login with</h2>
+                    <div class="login-icons">
+                        <ul>
+                            <li><a href="#" class="facebook"><i class="fa fa-facebook"></i></a></li>
+                            <li><a href="#" class="twitter"><i class="fa fa-twitter"></i></a></li>
+                            <li><a href="#" class="google"><i class="fa fa-google-plus"></i></a></li>
+                            <li><a href="#" class="dribbble"><i class="fa fa-dribbble"></i></a></li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- //login -->
+<script src="../../public/js/login.js"></script>

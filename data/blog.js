@@ -7,6 +7,7 @@
 
 const mongoCollections = require("../config/mongoCollections");
 const blog = mongoCollections.blog;
+const imageData = require("./image")
 const uuid = require('node-uuid');
 
 /*
@@ -22,6 +23,7 @@ const uuid = require('node-uuid');
  "type": "",
  "tag": [],
  "userId": "",
+ "cityId": "",
  "siteId": []
  }
  */
@@ -30,21 +32,80 @@ let exportedMethods = {
     getAllBlogs() {
         return blog().then((blogCollection) => {
             return blogCollection.find({}).toArray();
+        })
+        .catch(e=>{
+            console.log(e);
+            Promise.reject(e);
         });
     },
-
+    //get all sblog and its images if exist
+    getAllBlogsWithImage() {
+        return blog().then((blogCollection) => {
+            return blogCollection.find({}).toArray();
+        })
+        .then((blogList)=>{
+        let promises = [];
+        let imagesPath = [];
+        for (let i = 0, len = blogList.length; i < len; i++) {
+            promises.push(imageData.getImageById(blogList[i].mainImage).then((image) => {
+                imagesPath[i] = image.path
+            }).catch((e)=>{
+                console.log(e);
+                imagesPath[i] = null; //if not have image, set to null
+            }));
+        }
+        return Promise.all(promises)
+            .then(() => {
+                for (let i=0;i<blogList.length && imagesPath.length;i++){
+                    blogList[i]['imagePath']=imagesPath[i];
+                }
+                return blogList;
+            });
+        })
+        .catch(e=>{
+            console.log(e);
+            Promise.reject(e);
+        });
+    },
     getBlogById(id) {
         if (!id) return Promise.reject ("You must provide an id.");
-
         return blog().then((blogCollection) => {
+            console.log("get blog by id: "+id);
             return blogCollection.findOne({ _id: id }).then((blog) => {
                 if (!blog) return Promise.reject (`blog with id: ${id} is not found.`);
-
                 return blog;
             });
+        })
+        .catch(e=>{
+            console.log(e);
+            return Promise.reject(e);
         });
     },
-
+    //get blog and its image if exist
+     getBlogByIdWithImage(id) {
+        if (!id) return Promise.reject ("You must provide an id.");
+        return blog().then((blogCollection) => {
+            console.log("get blog by id: "+id);
+            return blogCollection.findOne({ _id: id }).then((blog) => {
+                if (!blog) return Promise.reject (`blog with id: ${id} is not found.`);
+                return blog;
+            });
+        })
+        .then((blog)=>{
+            return imageData.getImageById(blog.mainImage).then((image)=>{
+                blog["imagePath"]=image.path;
+                return blog;
+            }).catch(e=>{
+                console.log(e);
+                blog["imagePath"]=null;
+                return blog;
+            })
+        })
+        .catch(e=>{
+            console.log(e);
+            return Promise.reject(e);
+        });
+    },
     getBlogByTitle(title) {
         if (!title) return Promise.reject ("You must provide a blog title.");
 
@@ -66,7 +127,6 @@ let exportedMethods = {
             });
         });
     },
-
     getBlogByType(type) {
         if (!type) return Promise.reject ("You must provide a type.");
 
@@ -78,28 +138,41 @@ let exportedMethods = {
         });
     },
 
-    addBlog(title, content, mainImage, conclusions, type, tag, userId, siteId) {
+    addBlog(blogInfo) {
+        //title, content, mainImage, conclusions, type, tag, userId, cityId, siteId
         // check title and content
-        if (!title) return Promise.reject ("You must provide a title of the blog.");
-        if (!content) return Promise.reject("You must provide content of the blog.")
+        if (!blogInfo.title) return Promise.reject ("You must provide a title of the blog.");
+        if (!blogInfo.content) return Promise.reject("You must provide content of the blog.")
+        if (!blogInfo.mainImage)  blogInfo.mainImage =null;
+        if (!blogInfo.conclusions)  blogInfo.conclusions =null;
+        if (!blogInfo.type)  blogInfo.type =null;
+        if (!blogInfo.tag)  blogInfo.tag =null;
+        if (!blogInfo.userId)  blogInfo.userId =null;
+        if (!blogInfo.cityId)  blogInfo.cityId =null;
+        if (!blogInfo.siteId)  blogInfo.siteId =null;
+        
         return blog().then((blogCollection) => {
             let newblog = {
                 _id: uuid.v4(),
-                title: title,
-                content: content,
+                title: blogInfo.title,
+                content: blogInfo.content,
                 createTime: new Date("<YYYY-mm-dd>"),
-                mainImage: mainImage,
-                conclusions: conclusions,
-                type: type,
-                tag: tag,
-                userId: userId,
-                siteId: siteId
+                mainImage: blogInfo.mainImage,
+                conclusions: blogInfo.conclusions,
+                type: blogInfo.type,
+                tag: blogInfo.tag,
+                userId: blogInfo.userId,
+                cityId: blogInfo.cityId,
+                siteId: blogInfo.siteId
             };
-
+                
             return blogCollection.insertOne(newblog).then((newInsertInformation) => {
                 return newInsertInformation.insertedId;
             }).then((newId) => {
-                return this.getblogById(newId);
+                console.log("add blog!!!"+newId);
+                return this.getBlogById(newId);
+            }).catch(function(e) {
+                console.log(e);  // "oh, no!"
             });
         });
     },
@@ -109,7 +182,7 @@ let exportedMethods = {
         if (!newTag) return Promise.reject("You must provide a tag.");
         return blog().then((blogCollection) => {
             return blogCollection.update({ _id: id }, { $addToSet: { "tag": newTag } }).then((result) => {
-                return this.getblogById(id);
+                return this.getBlogById(id);
             });
         });
     },
@@ -171,6 +244,10 @@ let exportedMethods = {
             // tag
             if (updatedblog.tag) {
                 updatedblogData.tag = updatedblog.tag;
+            }
+            // siteId
+            if (updatedblog.cityId) {
+                updatedblogData.cityId = updatedblog.cityId;
             }
             // siteId
             if (updatedblog.siteId) {

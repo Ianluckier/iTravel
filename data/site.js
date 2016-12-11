@@ -36,9 +36,19 @@ let exportedMethods = {
 		});
 	},
 
-	addSite(name, location, address, commute, price, closingTime, phone, website, description, mainImage, type, tips, tag, cityId) {
+	getSitesByCityId(cityId) {
+		if(!cityId) reject("You must provide a correct id to search for!");
+		return sites().then((siteCollection) => {
+			return siteCollection.find({cityId: cityId}).toArray().then((siteArr) => {
+				return siteArr;
+			});
+		});
+	},
+
+	addSite(name, locationlat, locationlnt, address, commute, price, closingTime, phone, website, description, mainImage, type, tips, tag, cityId) {
 		if(!name || typeof name !== "string") reject("You must provide a correct name for the site!");
-		if(!location) reject("You must provide the correct location for the site!");
+		if(!locationlat || isNaN(locationlat)) reject("You must provide the correct location for the site!");
+		if(!locationlnt || isNaN(locationlnt)) reject("You must provide the correct location for the site!");
 		if(!address || typeof address !== "string") reject("You must provide the correct address for the site!");
 		//if(!commute || typeof commute !== "string") reject("You must provide the correct commute method for the site!");
 		//if(!price) reject("You must provide the correct price for the site!");
@@ -55,7 +65,8 @@ let exportedMethods = {
 			let newSite = {
 				_id: uuid.v4(),
 				name: name,
-				location: location,
+				locationlat: locationlat,
+				locationlnt: locationlnt,
 				address: address,
 				commute: commute,
 				price: price,
@@ -87,8 +98,12 @@ let exportedMethods = {
 				updatedPostData.name = updatedSite.name;
 			}
 
-			if(updatedSite.location) {
-				updatedPostData.location = updatedSite.location;
+			if(updatedSite.locationlat) {
+				updatedPostData.locationlat = updatedSite.locationlat;
+			}
+
+			if(updatedSite.location_lnt) {
+				updatedPostData.locationlnt = updatedSite.locationlnt;
 			}
 
 			if(updatedSite.address) {

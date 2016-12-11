@@ -1,9 +1,10 @@
 {
-  "name": "Itravel",
+  "name": "ITravel",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
+    "seed": "node ./tasks/seed.js",
     "start": "node app.js"
   },
   "author": "XuanLi,XinyuGe,YiranLi,ZihaoZhao,QingzhengLiu",
@@ -18,11 +19,13 @@
     "express-flash": "0.0.2",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.14.2",
+    "forEachAsync": "^3.0.0",
     "handlebars": "^4.0.6",
     "mongodb": "^2.2.12",
     "node-uuid": "^1.4.7",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
-    "xss": "^0.3.1"
+    "xss": "^0.3.1",
+    "multer": "^1.2.0"
   }
 }

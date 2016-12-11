@@ -24,12 +24,14 @@ const uuid = require('node-uuid');
  */
 
 let exportedMethods = {
+// getAllComments    
     getAllComments() {
         return comment().then((commentCollection) => {
             return commentCollection.find({}).toArray();
         });
     },
-
+    
+// getCommentById
     getCommentById(id) {
         if (!id) return Promise.reject ("You must provide a comment id.");
 
@@ -41,7 +43,8 @@ let exportedMethods = {
             });
         });
     },
-
+    
+// getCommentByUserId
     getCommentByUserId(userId) {
         if (!userId) return Promise.reject ("You must provide a userId.");
 
@@ -53,18 +56,32 @@ let exportedMethods = {
         });
     },
     
-    getCommentByBlogId(blogId) {
-        if (!blogId) return Promise.reject ("You must provide a blogId.");
-        console.log(blogId);
+// getCommentByCityId    
+    getCommentByCityId(cityId) {
+        if (!cityId) return Promise.reject ("You must provide a cityId.");
+
         return comment().then((commentCollection) => {
-            return commentCollection.find({ "blogId": blogId }).toArray().then((commentList) => {
-                if (!commentList) return Promise.reject ('comment with blogId of ${blogId} is not found.');
+            return commentCollection.find({ cityId: cityId }).toArray().then((commentList) => {
+                if (!commentList) return Promise.reject ('comment named ${cityId} is not found.');
                 return commentList;
             });
-        }); 
-    },   
+        });
+    },
+    
+// getCommentByBelongToId
+    getCommentByBelongToId(id) {
+        if (!id) return Promise.reject ("You must provide a belongToId.");
 
-    addComment(content, createTime, stars, userId, target, blogId, siteId, cityId) {
+        return comment().then((commentCollection) => {
+            return commentCollection.find({belongToId: id}).toArray().then((commentList) => {
+                if (!commentList) return Promise.reject ('comment named ${siteId} is not found.');
+                return commentList;
+            });
+        });
+    },
+
+// addComment    
+    addComment(content, createTime, stars, userId, belongToId) {
         // check content and userId
         if (!content) return Promise.reject ("You must provide content of the comment.");
         //if (!userId) return Promise.reject ("You must provide userId of the comment.");
@@ -76,10 +93,7 @@ let exportedMethods = {
                 createTime: createTime,
                 stars: stars,
                 userId: userId,
-                target: target,
-                blogId: blogId,
-                siteId: siteId,
-                cityId: cityId,
+                belongToId: belongToId
             };
 
             return commentCollection.insertOne(newComment).then((newInsertInformation) => {
@@ -90,7 +104,7 @@ let exportedMethods = {
         });
     },
 
-
+// removeComment
     removeComment(id) {
         if (!id) return Promise.reject ("You must provide an comment id.");
 
@@ -102,7 +116,8 @@ let exportedMethods = {
             });
         });
     },
-
+    
+// removeCommentStars
     removeCommentStars(id, StarsToRemove) {
         if (!id) return Promise.reject("You must provide a comment id.");
         if (!StarsToRemove) return Promise.reject("You must provide star to remove.");
@@ -113,7 +128,8 @@ let exportedMethods = {
             });
         });
     },
-
+    
+// updateComment
     updateComment(id, updatedComment) {
         if (!id) return Promise.reject ("You must provide an id.");
 

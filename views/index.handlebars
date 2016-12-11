@@ -1,0 +1,210 @@
+
+<!-- banner -->
+<div class="banner">
+    <div class="slider">
+        <h2 class="wow shake animated" data-wow-delay=".5s">ITravel- a new travel guide website</h2>
+        <div class="border"></div>
+        <script src="../public/js/responsiveslides.min.js"></script>
+        <script>
+            // You can also use "$(window).load(function() {"
+            $(function () {
+                // Slideshow 4
+                $("#slider3").responsiveSlides({
+                    auto: true,
+                    pager: true,
+                    nav: true,
+                    speed: 500,
+                    namespace: "callbacks",
+                    before: function () {
+                        $('.events').append("<li>before event fired.</li>");
+                    },
+                    after: function () {
+                        $('.events').append("<li>after event fired.</li>");
+                    }
+                });
+            });
+        </script>
+        <div  id="top" class="callbacks_container-wrap">
+            <ul class="rslides" id="slider3">
+                <li>
+                    <div class="slider-info">
+                        <h3 class="wow fadeInRight animated" data-wow-delay=".5s">China has the greatest number world-class tourist. </h3>
+                        <p class="wow fadeInLeft animated" data-wow-delay=".5s">China’s culture is the richest.</p>
+                        <div class="more-button wow fadeInRight animated" data-wow-delay=".5s">
+
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="slider-info">
+                        <h3>China has a history of over 4,000 years</h3>
+                        <p>China has a history of over 4,000 years, and a culture that is as rich as the history is long.</p>
+                        <div class="more-button">
+
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="slider-info">
+                        <h3>Chinese food	</h3>
+                        <p> Food has a special meaning to the Chinese people, and Chinese food has distinctive culinary styles all its own.	</p>
+                        <div class="more-button">
+
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- //banner -->
+<!-- banner-bottom -->
+<div class="banner-bottom">
+    <div class="container">
+        <div class="banner-bottom-grids">
+            <div class="col-md-6 banner-bottom-left wow fadeInLeft animated" data-wow-delay=".5s">
+                <div class="left-border">
+                    <div class="left-border-info">
+                        <p> The World’s Richest Breadth of Culture</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 banner-bottom-left banner-bottom-right wow fadeInRight animated" data-wow-delay=".5s">
+                <div class="left-border">
+                    <div class="left-border-info right-border-info">
+                        <p>Most Varied and Spectacular Natural Wonders</p>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+    </div>
+</div>
+<!-- //banner-bottom -->
+
+<!-- Cities -->
+<div class="information">
+    <div class="container">
+        <div class="information-heading">
+            <h3 class="wow fadeInDown animated" data-wow-delay=".5s">Cities</h3>
+            <p class="wow fadeInUp animated" data-wow-delay=".5s">Whether you are looking for ancient history, urban wonders, picturesque landscapes, or cultural experiences; more and more world travelers are turning their toes towards China. For first time travelers to this beautiful and historic land, here are some facts you may wish to know.</p>
+        </div>
+        <!-- city one -->
+        <div class="information-grids">
+            <div class="col-md-4 information-grid wow fadeInLeft animated" data-wow-delay=".5s">
+                <div class="information-info">
+                    {{#if returnValue.clist.0.mainImage}}
+                    <div class="information-grid-img">
+                        <img src="../..{{returnValue.clist.0.mainImage.path}}" alt="" />
+                    </div>
+                    {{/if}}
+                    <div class="information-grid-info">
+                        <a href="city/id/{{returnValue.clist.0._id}}"><h4>{{returnValue.clist.0.name}} </h4></a>
+                        <p>{{returnValue.clist.0.name}}, one of the most famous cities to visit!</p>
+                    </div>
+                </div>
+            </div>
+            <!-- city two -->
+            <div class="col-md-4 information-grid wow fadeInUp animated" data-wow-delay=".5s">
+                <div class="information-info">
+                    <div class="information-grid-info">
+                        <a href="city/id/{{returnValue.clist.1._id}}"><h4>{{returnValue.clist.1.name}} </h4></a>
+                        <p>{{returnValue.clist.1.name}}, one of the most famous cities to visit!</p>
+                    </div>
+                    {{#if returnValue.clist.1.mainImage}}
+                    <div class="information-grid-img">
+                        <img src="../..{{returnValue.clist.1.mainImage.path}}" alt="" />
+                    </div>
+                    {{else}}
+                        image error!! {{returnValue.clist.1.mainImage}}
+                    {{/if}}
+                </div>
+            </div>
+            <!-- city three -->
+            <div class="col-md-4 information-grid wow fadeInRight animated" data-wow-delay=".5s">
+                <div class="information-info">
+                    {{#if returnValue.clist.2.mainImage}}
+                    <div class="information-grid-img">
+                        <img src="../..{{returnValue.clist.2.mainImage.path}}" alt="" />
+                    </div>
+                    {{/if}}
+                    <div class="information-grid-info">
+                        <a href="city/id/{{returnValue.clist.2._id}}"><h4>{{returnValue.clist.2.name}} </h4></a>
+                        <p>{{returnValue.clist.2.name}}, one of the most famous cities to visit!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+    </div>
+</div>
+<!-- //Cities -->
+
+<!-- blog -->
+<div class="popular">
+    <div class="container">
+        <div class="popular-heading information-heading">
+            <h3 class="wow fadeInDown animated" data-wow-delay=".5s">Popular Blogs</h3>
+            <p class="wow fadeInUp animated" data-wow-delay=".5s">Travel blogging has given me the freedom to travel the world for the past 6 years. Want to start your own? This detailed guide will show you exactly how to start a travel blog.</p>
+        </div>
+        <div class="popular-slide">
+            <script>
+                // You can also use "$(window).load(function() {"
+                $(function () {
+                    // Slideshow 4
+                    $("#slider1").responsiveSlides({
+                        auto: true,
+                        pager: true,
+                        nav: false,
+                        speed: 500,
+                        namespace: "callbacks",
+                        before: function () {
+                            $('.events').append("<li>before event fired.</li>");
+                        },
+                        after: function () {
+                            $('.events').append("<li>after event fired.</li>");
+                        }
+                    });
+                });
+            </script>
+            <div  id="top" class="callbacks_container-wrap">
+                <ul class="rslides" id="slider1">
+                    <li>
+                        <div class="popular-slide-info wow bounceIn animated" data-wow-delay=".5s">
+                            <h4>{{returnValue.blist.0.title}}</h4>
+                            <p>{{ returnValue.blist.0.content}}</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="popular-slide-info popular-slide1">
+                            <h4>{{returnValue.blist.1.title}}</h4>
+                            <p>{{ returnValue.blist.1.content}}</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="popular-slide-info popular-slide2">
+                            <h4>{{returnValue.blist.2.title}}</h4>
+                            <p>{{ returnValue.blist.2.content}}</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="popular-grids">
+            <div class="col-md-4 popular-grid wow fadeInLeft animated" data-wow-delay=".5s">
+                <h5>Meet fellow travel bloggers who share your passion for travel</h5>
+                <p>With the help of Twitter, you’ll meet other travel bloggers who are doing the same thing you are: exploring the world and writing about their experiences. There are heaps of us out there who struggle with wanderlust and choose to travel to far and away places – writing all the way.</p>
+            </div>
+            <div class="col-md-4 popular-grid wow fadeInUp animated" data-wow-delay=".5s">
+                <h5>Learn from other travel bloggers</h5>
+                <p>If you write your own travel blog, you’ll inevitably spend much of your time online reading other travel blogs. While you waste away hours at the office (or in a Parisian cafe) catching up on your RSS reader which is full of great travel blogs, you’ll learn things about travel you never could anywhere else. How else would I find out ways to deal with dodgy internet connections on the road?.</p>
+            </div>
+            <div class="col-md-4 popular-grid wow fadeInRight animated" data-wow-delay=".5s">
+                <h5>Do it for yourself</h5>
+                <p>If nothing else, you should write a travel blog for yourself. There are many benefits outside of the ones listed above – for example, you’ll feel more grounded on your long term trip having a responsibility outside of simply traveling. Maintaining a travel blog inevitably adds structure to your life.</p>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+    </div>
+</div>
+<!-- //blog -->
